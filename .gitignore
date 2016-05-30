@@ -1,4 +1,5 @@
 #ignore files
 bin
 obj
+packages
 *.suo
