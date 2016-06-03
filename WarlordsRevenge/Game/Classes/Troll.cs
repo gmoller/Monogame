@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using WarlordsRevenge.Hexagons;
+using FarSeerCamera2D = WarlordsRevenge.FarseerSamples.Camera2D;
 
 namespace WarlordsRevenge.Classes
 {
@@ -24,18 +26,15 @@ namespace WarlordsRevenge.Classes
         {
         }
 
-        public void Draw(SpriteBatch spriteBatch, Camera2D camera)
+        public void Draw(SpriteBatch spriteBatch, FarSeerCamera2D camera)
         {
-            float xOffset = camera.Origin.X - Constants.HALF_HEX_WIDTH;
-            float yOffset = camera.Origin.Y - Constants.HALF_HEX_HEIGHT;
+            Vector2 centerPixel = _position.HexToPixel();
+            Vector2 topLeftPixel = centerPixel - new Vector2(Constants.HALF_HEX_WIDTH, Constants.HALF_HEX_HEIGHT);
 
-            var position = _position.HexToPixel();
-            position.X += xOffset;
-            position.Y += yOffset;
-
-            var transformMatrix = camera.GetViewMatrix(Vector2.One);
+            //var transformMatrix = camera.GetViewMatrix(Vector2.One);
+            var transformMatrix = camera.SimView;
             spriteBatch.Begin(transformMatrix: transformMatrix);
-            spriteBatch.Draw(_image, position, Color.White);
+            spriteBatch.Draw(_image, topLeftPixel, Color.White);
             spriteBatch.End();
         }
     }

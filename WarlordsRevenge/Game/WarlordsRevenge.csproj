@@ -38,18 +38,34 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Classes\Cell.cs" />
-    <Compile Include="Classes\CellData.cs" />
-    <Compile Include="Classes\Hexagon.cs" />
+    <Compile Include="Classes\CursorSprites.cs" />
+    <Compile Include="Classes\WarlordsRevengeGameScreen.cs" />
+    <Compile Include="FarseerSamples\BackgroundScreen.cs" />
+    <Compile Include="FarseerSamples\Camera2D.cs" />
+    <Compile Include="FarseerSamples\ConvertUnits.cs" />
+    <Compile Include="FarseerSamples\FrameRateCounter.cs" />
+    <Compile Include="FarseerSamples\GameScreen.cs" />
+    <Compile Include="FarseerSamples\IDemoScreen.cs" />
+    <Compile Include="FarseerSamples\LogoScreen.cs" />
+    <Compile Include="FarseerSamples\MenuButton.cs" />
+    <Compile Include="FarseerSamples\MenuEntry.cs" />
+    <Compile Include="FarseerSamples\MenuScreen.cs" />
+    <Compile Include="FarseerSamples\MessageBoxScreen.cs" />
+    <Compile Include="FarseerSamples\ScreenManager.cs" />
+    <Compile Include="FarseerSamples\Sprite.cs" />
+    <Compile Include="FarseerSamples\SpriteFonts.cs" />
+    <Compile Include="Grid\Cell.cs" />
+    <Compile Include="Grid\CellData.cs" />
+    <Compile Include="Hexagons\Hexagon.cs" />
     <Compile Include="Classes\Images.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\GridRenderer.cs" />
-    <Compile Include="Classes\HexagonAxial.cs" />
-    <Compile Include="Classes\HexagonCube.cs" />
-    <Compile Include="Classes\HexagonGrid.cs" />
-    <Compile Include="Classes\HexagonOffset.cs" />
+    <Compile Include="Hexagons\HexagonAxial.cs" />
+    <Compile Include="Hexagons\HexagonCube.cs" />
+    <Compile Include="Grid\HexagonGrid.cs" />
+    <Compile Include="Hexagons\HexagonOffset.cs" />
     <Compile Include="Classes\InputManager.cs" />
-    <Compile Include="Classes\MapReader.cs" />
+    <Compile Include="Grid\MapReader.cs" />
     <Compile Include="Classes\Troll.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
