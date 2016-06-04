@@ -17,7 +17,7 @@ namespace WarlordsRevenge.Classes
         private ContentManager _content;
 
         private readonly Images _images;
-        private readonly Cursors _cursors;
+        private Cursors _cursors;
         private readonly HexagonGrid _grid;
         private GridRenderer _gridRenderer;
         private FarSeerCamera2D _camera1;
@@ -36,16 +36,10 @@ namespace WarlordsRevenge.Classes
             _images = new Images();
             _troll = new Troll();
             _grid = MapReader.ReadFromFile("First.map");
-            _cursors = new Cursors(new Rectangle(0, 0, 1260, 900));
         }
 
-        public override void LoadContent()
+        public override void Initialize()
         {
-            if (_content == null)
-            {
-                _content = new ContentManager(ScreenManager.Game.Services, "Content");
-            }
-
             _gridRenderer = new GridRenderer();
             _camera1 = new FarSeerCamera2D(ScreenManager.GraphicsDevice);
             _cameraMap = new FarSeerCamera2D(ScreenManager.GraphicsDevice);
@@ -64,15 +58,25 @@ namespace WarlordsRevenge.Classes
             //_cameraMap.MaxPosition = new Vector2(maxNumberOfPixelsCanScrollRight, maxNumberOfPixelsCanScrollUpDown);
             _cameraMap.MaxPosition = new Vector2(1260 * Constants.HALF, 900 * Constants.HALF);
 
-            _cursors.LoadContent(_content);
-            _images.LoadContent(_content, new[] { "Palette1.txt", "Palette2.txt" });
-            _troll.LoadContent(_content);
-
             _centerPixel = Vector2.Zero;
             _topLeftPixel = new Vector2(-ScreenManager.GraphicsDevice.Viewport.Width * Constants.HALF, -ScreenManager.GraphicsDevice.Viewport.Height * Constants.HALF);
             _topRightPixel = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width * Constants.HALF, -ScreenManager.GraphicsDevice.Viewport.Height * Constants.HALF);
             _bottomLeftPixel = new Vector2(-ScreenManager.GraphicsDevice.Viewport.Width * Constants.HALF, ScreenManager.GraphicsDevice.Viewport.Height * Constants.HALF);
             _bottomRightPixel = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width * Constants.HALF, ScreenManager.GraphicsDevice.Viewport.Height * Constants.HALF);
+
+            _cursors = new Cursors(new Rectangle(0, 0, ScreenManager.GraphicsDevice.Viewport.Width - 340, ScreenManager.GraphicsDevice.Viewport.Height));
+        }
+
+        public override void LoadContent()
+        {
+            if (_content == null)
+            {
+                _content = new ContentManager(ScreenManager.Game.Services, "Content");
+            }
+
+            _cursors.LoadContent(_content);
+            _images.LoadContent(_content, new[] { "Palette1.txt", "Palette2.txt" });
+            _troll.LoadContent(_content);
         }
 
         public override void UnloadContent()
@@ -99,6 +103,8 @@ namespace WarlordsRevenge.Classes
             Cursor cursor = _cursors.GetCurrentCursor(mousePosition);
             InputManager.SetCursorSprite(cursor.Sprite);
             MoveCamera(cursor, gameTime);
+
+            _troll.Update(_cameraMap);
 
             base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
         }

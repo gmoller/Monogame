@@ -41,5 +41,26 @@ namespace WarlordsRevenge.Hexagons
 
             return new Vector2(x, y);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IncludesPixel(Vector2 pixel)
+        {
+            float q = pixel.X * Constants.TWO_THIRDS / Constants.HALF_HEX_WIDTH;
+            double r = (-pixel.X / 3.0f + Constants.HALF * pixel.Y) / Constants.HALF_HEX_HEIGHT;
+            var axial = new HexagonAxial(q, (float)r);
+            axial = axial.Round();
+
+            return (axial.Q == Q && axial.R == R);
+        }
+
+        public HexagonAxial Round()
+        {
+            HexagonCube cube = ToCube();
+            cube = cube.Round();
+
+            return cube.ToAxial();
+        }
     }
 }

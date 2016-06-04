@@ -202,7 +202,10 @@ namespace WarlordsRevenge.FarseerSamples
 
             // If we have a graphics device, tell the screen to load content.
             if (_isInitialized)
+            {
+                screen.Initialize();
                 screen.LoadContent();
+            }
 
             _screens.Add(screen);
         }

@@ -103,6 +103,13 @@ namespace WarlordsRevenge.FarseerSamples
         public ScreenManager ScreenManager { get; internal set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public virtual void Initialize()
+        {
+        }
+
+        /// <summary>
         /// Load graphics content for the screen.
         /// </summary>
         public virtual void LoadContent()
