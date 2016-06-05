@@ -58,7 +58,7 @@ namespace WarlordsRevenge.FarseerSamples
         /// </summary>
         public override void HandleInput(GameTime gameTime)
         {
-            if (InputManager.IsMenuSelect() || InputManager.IsMenuCancel() || InputManager.IsNewMouseButtonPress(MouseButtons.LeftButton))
+            if (ScreenManager.InputManager.IsMenuSelect() || ScreenManager.InputManager.IsMenuCancel() || ScreenManager.InputManager.IsNewMouseButtonPress(MouseButtons.LeftButton))
             {
                 ExitScreen();
             }

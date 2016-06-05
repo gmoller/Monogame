@@ -9,20 +9,28 @@ namespace WarlordsRevenge.Classes
 {
     public class GridRenderer
     {
+        private readonly Rectangle _viewport;
+
+        public GridRenderer(Rectangle viewport)
+        {
+            _viewport = viewport;
+            const int fuzz = 40;
+            _viewport = new Rectangle(viewport.X - fuzz, viewport.Y - fuzz, viewport.Width + (fuzz * 2), viewport.Height + (fuzz * 2));
+        }
+
         public bool ShowGridLines { get; set; }
 
         public void Draw(SpriteBatch spriteBatch, HexagonGrid grid, Images images, FarSeerCamera2D camera)
         {
-            Matrix transformMatrix = camera.SimView;
-            spriteBatch.Begin(transformMatrix: transformMatrix);
-
             foreach (Cell cell in grid)
             {
                 Vector2 centerPixel = DeterminePositionToDraw(cell);
-                DrawCell(spriteBatch, cell, images, centerPixel, camera);
+                Vector2 screenPosition = camera.ConvertWorldToScreen(centerPixel);
+                if (_viewport.Contains(screenPosition))
+                {
+                    DrawCell(spriteBatch, cell, images, centerPixel);
+                }
             }
-
-            spriteBatch.End();
         }
 
         private Vector2 DeterminePositionToDraw(Cell cell)
@@ -33,17 +41,12 @@ namespace WarlordsRevenge.Classes
             return centerPixel;
         }
 
-        private void DrawCell(SpriteBatch spriteBatch, Cell cell, Images images, Vector2 centerPixel, FarSeerCamera2D camera)
+        private void DrawCell(SpriteBatch spriteBatch, Cell cell, Images images, Vector2 centerPixel)
         {
             byte i = 0;
             byte? paletteId = cell.GetPaletteId(i);
             byte? terrainId = cell.GetTerrainId(i);
             Vector2 topLeftPixel = centerPixel - new Vector2(Constants.HALF_HEX_WIDTH, Constants.HALF_HEX_HEIGHT);
-
-            if (camera.ConvertWorldToScreen(centerPixel).X > 1300)
-            {
-                return;
-            }
 
             while (paletteId != null)
             {
@@ -56,16 +59,14 @@ namespace WarlordsRevenge.Classes
 
             if (ShowGridLines)
             {
-                DrawHexagonOutline(spriteBatch, centerPixel);
+                DrawHexagonOutline(spriteBatch, centerPixel, 1.0f, Color.DarkBlue);
             }
         }
 
-        private void DrawHexagonOutline(SpriteBatch spriteBatch, Vector2 centerPixel)
+        public void DrawHexagonOutline(SpriteBatch spriteBatch, Vector2 centerPixel, float thickness, Color color)
         {
             Vector2[] corners = Hexagon.GetCorners(centerPixel);
 
-            Color color = Color.DarkBlue;
-            const float thickness = 2.0f;
             spriteBatch.DrawLine(corners[0], corners[1], color, thickness);
             spriteBatch.DrawLine(corners[1], corners[2], color, thickness);
             spriteBatch.DrawLine(corners[2], corners[3], color, thickness);

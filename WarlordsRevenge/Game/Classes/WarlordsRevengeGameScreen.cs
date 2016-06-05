@@ -6,6 +6,7 @@ using MonoGame.Extended;
 using MonoGame.Extended.Shapes;
 using WarlordsRevenge.FarseerSamples;
 using WarlordsRevenge.Grid;
+using WarlordsRevenge.Hexagons;
 using FarSeerCamera2D = WarlordsRevenge.FarseerSamples.Camera2D;
 
 namespace WarlordsRevenge.Classes
@@ -23,7 +24,7 @@ namespace WarlordsRevenge.Classes
         private FarSeerCamera2D _camera1;
         private FarSeerCamera2D _cameraMap;
 
-        private readonly Troll _troll;
+        private Troll _troll;
 
         private Vector2 _centerPixel;
         private Vector2 _topLeftPixel;
@@ -34,13 +35,13 @@ namespace WarlordsRevenge.Classes
         public WarlordsRevengeGameScreen()
         {
             _images = new Images();
-            _troll = new Troll();
             _grid = MapReader.ReadFromFile("First.map");
         }
 
         public override void Initialize()
         {
-            _gridRenderer = new GridRenderer();
+            var viewport = new Rectangle(0, 0, ScreenManager.GraphicsDevice.Viewport.Width - 340, ScreenManager.GraphicsDevice.Viewport.Height);
+            _gridRenderer = new GridRenderer(viewport);
             _camera1 = new FarSeerCamera2D(ScreenManager.GraphicsDevice);
             _cameraMap = new FarSeerCamera2D(ScreenManager.GraphicsDevice);
 
@@ -51,12 +52,10 @@ namespace WarlordsRevenge.Classes
             const float maxNumberOfPixelsCanScrollRight = Constants.THREE_QUARTERS_HEX_WIDTH * maxNumberOfHexagonsCanScrollRight;
             const float maxNumberOfPixelsCanScrollUpDown = Constants.HEX_HEIGHT * maxNumberOfHexagonsCanScrollUpDown;
 
-            var viewport = new Rectangle(0, 0, 1260, 900);
-
             //_cameraMap.MinPosition = new Vector2(-maxNumberOfPixelsCanScrollLeft, -maxNumberOfPixelsCanScrollUpDown);
-            _cameraMap.MinPosition = new Vector2(-1260 * 0.25f, -900 * Constants.HALF);
+            _cameraMap.MinPosition = new Vector2(-viewport.Width * 0.25f, -viewport.Height * Constants.HALF);
             //_cameraMap.MaxPosition = new Vector2(maxNumberOfPixelsCanScrollRight, maxNumberOfPixelsCanScrollUpDown);
-            _cameraMap.MaxPosition = new Vector2(1260 * Constants.HALF, 900 * Constants.HALF);
+            _cameraMap.MaxPosition = new Vector2(viewport.Width * Constants.HALF, viewport.Height * Constants.HALF);
 
             _centerPixel = Vector2.Zero;
             _topLeftPixel = new Vector2(-ScreenManager.GraphicsDevice.Viewport.Width * Constants.HALF, -ScreenManager.GraphicsDevice.Viewport.Height * Constants.HALF);
@@ -65,6 +64,8 @@ namespace WarlordsRevenge.Classes
             _bottomRightPixel = new Vector2(ScreenManager.GraphicsDevice.Viewport.Width * Constants.HALF, ScreenManager.GraphicsDevice.Viewport.Height * Constants.HALF);
 
             _cursors = new Cursors(new Rectangle(0, 0, ScreenManager.GraphicsDevice.Viewport.Width - 340, ScreenManager.GraphicsDevice.Viewport.Height));
+
+            _troll = new Troll(ScreenManager.InputManager);
         }
 
         public override void LoadContent()
@@ -86,12 +87,12 @@ namespace WarlordsRevenge.Classes
 
         public override void HandleInput(GameTime gameTime)
         {
-            if (InputManager.IsKeyPressed(Keys.Escape))
+            if (ScreenManager.InputManager.IsKeyPressed(Keys.Escape))
             {
                 ExitScreen();
             }
 
-            if (InputManager.IsNewKeyPress(Keys.F1))
+            if (ScreenManager.InputManager.IsNewKeyPress(Keys.F1))
             {
                 _gridRenderer.ShowGridLines = !_gridRenderer.ShowGridLines;
             }
@@ -99,9 +100,9 @@ namespace WarlordsRevenge.Classes
 
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
-            Vector2 mousePosition = InputManager.GetMousePosition();
+            Vector2 mousePosition = ScreenManager.InputManager.GetMousePosition();
             Cursor cursor = _cursors.GetCurrentCursor(mousePosition);
-            InputManager.SetCursorSprite(cursor.Sprite);
+            ScreenManager.InputManager.SetCursorSprite(cursor.Sprite);
             MoveCamera(cursor, gameTime);
 
             _troll.Update(_cameraMap);
@@ -139,16 +140,25 @@ namespace WarlordsRevenge.Classes
 
         public override void Draw(GameTime gameTime)
         {
+            Matrix transformMatrix = _cameraMap.SimView;
+            ScreenManager.SpriteBatch.Begin(transformMatrix: transformMatrix);
             _gridRenderer.Draw(ScreenManager.SpriteBatch, _grid, _images, _cameraMap);
-            _troll.Draw(ScreenManager.SpriteBatch, _cameraMap);
 
-            Matrix transformMatrix = _camera1.SimView;
+            Vector2 mousePosition = ScreenManager.InputManager.GetMousePosition();
+            Vector2 mousePositionWorld = _cameraMap.ConvertScreenToWorld(mousePosition);
+            HexagonAxial axial = mousePositionWorld.PixelToHex();
+            _gridRenderer.DrawHexagonOutline(ScreenManager.SpriteBatch, axial.HexToPixel(), 2.0f, Color.DeepSkyBlue);
+
+            _troll.Draw(ScreenManager.SpriteBatch);
+            ScreenManager.SpriteBatch.End();
+
+            transformMatrix = _camera1.SimView;
             ScreenManager.SpriteBatch.Begin(transformMatrix: transformMatrix);
             ScreenManager.SpriteBatch.DrawCircle(_centerPixel, 5.0f, 10, Color.Red, 2);
             ScreenManager.SpriteBatch.FillRectangle(_topLeftPixel.X + 10.0f, _topLeftPixel.Y + 10.0f, 265.0f, 105.0f, new Color(Color.Salmon, 0.5f));
             ScreenManager.SpriteBatch.FillRectangle(_topRightPixel.X - 340.0f, _topRightPixel.Y, 340.0f, 900.0f, Color.DarkSlateGray);
 
-            Vector2 mousePosition1 = InputManager.GetMousePosition();
+            Vector2 mousePosition1 = ScreenManager.InputManager.GetMousePosition();
             Vector2 mousePosition2 = _camera1.ConvertScreenToWorld(mousePosition1);
             Vector2 mousePosition3 = mousePosition2 + _cameraMap.Position;
             Vector2 mousePosition4 = _camera1.ConvertWorldToScreen(mousePosition2);

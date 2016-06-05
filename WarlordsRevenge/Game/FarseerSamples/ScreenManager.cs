@@ -14,6 +14,7 @@ namespace WarlordsRevenge.FarseerSamples
     /// </summary>
     public class ScreenManager : DrawableGameComponent
     {
+        private readonly InputManager _inputManager;
         private bool _isInitialized;
 
         private readonly List<GameScreen> _screens;
@@ -30,12 +31,15 @@ namespace WarlordsRevenge.FarseerSamples
             Content = game.Content;
             Content.RootDirectory = "Content";
             //_input = new InputHelper(this);
-            InputManager.ShowCursor = true;
+            _inputManager = new InputManager();
+            _inputManager.ShowCursor = true;
 
             _screens = new List<GameScreen>();
             _screensToUpdate = new List<GameScreen>();
             _transitions = new List<RenderTarget2D>();
         }
+
+        public InputManager InputManager { get { return _inputManager; } }
 
         /// <summary>
         /// A default SpriteBatch shared by all the screens. This saves
@@ -71,7 +75,7 @@ namespace WarlordsRevenge.FarseerSamples
             //LineBatch = new LineBatch(GraphicsDevice);
             //Assets = new AssetCreator(GraphicsDevice);
             //Assets.LoadContent(Content);
-            InputManager.LoadContent(Content, GraphicsDevice);
+            _inputManager.LoadContent(Content, GraphicsDevice);
 
             // Tell each of the screens to load their content.
             foreach (GameScreen screen in _screens)
@@ -98,7 +102,7 @@ namespace WarlordsRevenge.FarseerSamples
         public override void Update(GameTime gameTime)
         {
             // Read the keyboard and gamepad.
-            InputManager.Update();
+            _inputManager.Update();
 
             // Make a copy of the master screen list, to avoid confusion if
             // the process of updating one screen adds or removes others.
@@ -189,7 +193,7 @@ namespace WarlordsRevenge.FarseerSamples
                 }
             }
 
-            InputManager.Draw(SpriteBatch);
+            _inputManager.Draw(SpriteBatch);
         }
 
         /// <summary>

@@ -115,18 +115,18 @@ namespace WarlordsRevenge.FarseerSamples
         public override void HandleInput(GameTime gameTime)
         {
             // Mouse or touch on a menu item
-            int hoverIndex = GetMenuEntryAt(InputManager.CursorPosition);
+            int hoverIndex = GetMenuEntryAt(ScreenManager.InputManager.CursorPosition);
             if (hoverIndex > -1 && _menuEntries[hoverIndex].IsSelectable() && !_scrollLock)
                 _selectedEntry = hoverIndex;
             else
                 _selectedEntry = -1;
 
             _scrollSlider.Hover = false;
-            if (InputManager.IsCursorValid)
+            if (ScreenManager.InputManager.IsCursorValid)
             {
-                _scrollUp.Collide(InputManager.CursorPosition);
-                _scrollDown.Collide(InputManager.CursorPosition);
-                _scrollSlider.Collide(InputManager.CursorPosition);
+                _scrollUp.Collide(ScreenManager.InputManager.CursorPosition);
+                _scrollDown.Collide(ScreenManager.InputManager.CursorPosition);
+                _scrollSlider.Collide(ScreenManager.InputManager.CursorPosition);
             }
             else
             {
@@ -136,7 +136,7 @@ namespace WarlordsRevenge.FarseerSamples
             }
 
             // Accept or cancel the menu? 
-            if (InputManager.IsMenuSelect() && _selectedEntry != -1)
+            if (ScreenManager.InputManager.IsMenuSelect() && _selectedEntry != -1)
             {
                 if (_menuEntries[_selectedEntry].IsExitItem())
                     ScreenManager.Game.Exit();
@@ -150,12 +150,12 @@ namespace WarlordsRevenge.FarseerSamples
                     }
                 }
             }
-            else if (InputManager.IsMenuCancel())
+            else if (ScreenManager.InputManager.IsMenuCancel())
             {
                 ScreenManager.Game.Exit();
             }
 
-            if (InputManager.IsMenuPressed())
+            if (ScreenManager.InputManager.IsMenuPressed())
             {
                 if (_scrollUp.Hover)
                 {
@@ -173,7 +173,7 @@ namespace WarlordsRevenge.FarseerSamples
                 }
             }
 
-            if (InputManager.IsMenuReleased())
+            if (ScreenManager.InputManager.IsMenuReleased())
             {
                 _scrollLock = false;
             }
@@ -181,7 +181,7 @@ namespace WarlordsRevenge.FarseerSamples
             if (_scrollLock)
             {
                 _scrollSlider.Hover = true;
-                _menuOffset = Math.Max(Math.Min(((InputManager.CursorPosition.Y - _menuBorderTop) / (_menuBorderBottom - _menuBorderTop)) * _maxOffset, _maxOffset), 0f);
+                _menuOffset = Math.Max(Math.Min(((ScreenManager.InputManager.CursorPosition.Y - _menuBorderTop) / (_menuBorderBottom - _menuBorderTop)) * _maxOffset, _maxOffset), 0f);
             }
         }
 

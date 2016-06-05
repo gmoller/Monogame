@@ -57,7 +57,7 @@ namespace WarlordsRevenge.FarseerSamples
 
         public override void HandleInput(GameTime gameTime)
         {
-            if (InputManager.AnyKeyPressed() || InputManager.LeftMouseButtonClicked())
+            if (ScreenManager.InputManager.AnyKeyPressed() || ScreenManager.InputManager.LeftMouseButtonClicked())
             {
                 _duration = TimeSpan.Zero;
             }
